@@ -1,0 +1,38 @@
+# begin .github/workflows/classroom.yml
+
+name: F1TENTH Lab 2 Tests
+
+on:
+  # push:
+  workflow_dispatch:  # Allow manual triggering
+  repository_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull testing container
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker pull ghcr.io/your-org/f1tenth-lab2-tester:latest
+
+      - name: Run tests
+        run: |
+          docker run --rm \
+            -v ~/ros2_ws/src/safety_node:/app/student_code \
+            -e STUDENT_CODE_FOLDER=/app/student_code \
+            -e PYTHONPATH=/app/student_code:/app/student_code/safety_node \
+            ghcr.io/your-org/f1tenth-lab2-tester:latest
+
+# end .github/workflows/classroom.yml
