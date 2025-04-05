@@ -30,7 +30,7 @@ jobs:
       - name: Run tests
         run: |
           docker run --rm \
-            -v ~/ros2_ws/src/safety_node:/app/student_code \
+            -v ${{ github.workspace }}:/app/student_code \
             -e STUDENT_CODE_FOLDER=/app/student_code \
             -e PYTHONPATH=/app/student_code:/app/student_code/safety_node \
             ghcr.io/your-org/f1tenth-lab2-tester:latest
